@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Environment
+.env
+*.env
+backend/.env
+.env.local
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# Uploads and generated files
+backend/app/static/uploads/*
+!backend/app/static/uploads/.gitkeep
+data/samples/*
+!data/samples/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.pytest_cache/
