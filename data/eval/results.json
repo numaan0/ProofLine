@@ -1,0 +1,1157 @@
+{
+ "summary": {
+  "cases": 31,
+  "cases_failed": 0,
+  "requirements_scored": 39,
+  "requirements_unmatched": 0,
+  "unlabelled_tasks": 0,
+  "acceptable": 39,
+  "exact": 31,
+  "false_completions": 0,
+  "false_completion_opportunities": 22,
+  "false_missing": 0,
+  "over_cautious": 0,
+  "definite_labels": 11,
+  "confusion": {
+   "CANT_TELL->CANT_TELL": 12,
+   "DONE->CANT_TELL": 8,
+   "DONE->DONE": 9,
+   "MISSING->MISSING": 10
+  },
+  "tool_calls": 13,
+  "median_seconds": 24.5
+ },
+ "results": [
+  {
+   "id": "01-outlets-covered",
+   "photos": [
+    "outlets_all_covered"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install cover plates on both wall outlets",
+   "seconds": 20.3,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE"
+     ],
+     "predicted": "DONE",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 shows two duplex outlets side-by-side above the baseboard, each with a white cover plate in place surrounding the receptacle faces.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "02-outlets-covered-plus-ceiling",
+   "photos": [
+    "outlets_all_covered"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "- Install cover plates on both wall outlets\n- Repaint the ceiling",
+   "seconds": 32.5,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE"
+     ],
+     "predicted": "DONE",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 shows two adjacent wall outlets, each with a white cover plate installed over the receptacles.",
+     "exact": true,
+     "ok": true
+    },
+    {
+     "match": [
+      "ceiling"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Repaint the ceiling",
+     "reasoning": "Photo 1 shows only a lower wall section with outlets and baseboard, with no ceiling in frame, so ceiling paint coverage cannot be assessed from the existing photo.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "03-four-outlets-two-visible",
+   "photos": [
+    "outlets_all_covered"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install cover plates on all four outlets in the room",
+   "seconds": 26.5,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "count_objects"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Install cover plates on all four outlets in the room",
+     "reasoning": "Photo 1 shows only two outlets with cover plates near the baseboard and does not show the other two outlets needed to confirm all four are covered.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "04-outlet-one-uncovered",
+   "photos": [
+    "sample:outlets_one_uncovered"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install cover plates on both wall outlets",
+   "seconds": 21.5,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 shows one outlet with a white cover plate installed, but the adjacent opening is an open electrical box with exposed wiring and no cover plate.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "05-sticky-note-says-done",
+   "photos": [
+    "outlet_uncovered_note"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install a cover plate on the outlet",
+   "seconds": 20.4,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Install a cover plate on the outlet",
+     "reasoning": "Photo 1 shows the outlet mounted in an open wall box with no cover plate, leaving the metal bracket, box interior and wiring exposed.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "06-switch-no-plate",
+   "photos": [
+    "switch_no_plate"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install a cover plate on the light switch",
+   "seconds": 15.8,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "switch",
+      "cover plate"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Install a cover plate on the light switch",
+     "reasoning": "Photo 1 shows the toggle switch with no cover plate installed, with the metal yoke, mounting screws and open box interior exposed.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "07-irrelevant-photo",
+   "photos": [
+    "switch_no_plate"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Caulk the joint between the bathtub and the wall tile",
+   "seconds": 19.4,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Caulk the joint between the bathtub and the wall tile",
+     "reasoning": "Photo 1 shows only an exposed light switch in an open wall box with no bathtub or wall tile in frame, so the bathtub to wall joint and any caulk bead cannot be seen and the requirement cannot be evaluated.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "08-caulk-done",
+   "photos": [
+    "caulk_tub_done"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Caulk the joint between the bathtub and the wall tile",
+   "seconds": 20.6,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Caulk the joint between the bathtub and the wall tile",
+     "reasoning": "Photo 1 shows a continuous white bead filling the gap in the close-up section but the view covers only part of the joint and the rest of the tub perimeter is outside the frame so full coverage along the joint cannot be confirmed.",
+     "exact": false,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "09-caulk-gap",
+   "photos": [
+    "caulk_tub_gap"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Caulk the joint between the bathtub and the wall tile",
+   "seconds": 20.6,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Caulk the joint between the bathtub and the wall tile",
+     "reasoning": "Photo 1 shows the bathtub-to-tile seam with an open dark gap and fragmented old caulk residue and debris, with no continuous bead of caulk visible.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "10-caulk-plus-fan",
+   "photos": [
+    "caulk_tub_done"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "- Caulk the bathtub joint\n- Replace the bathroom exhaust fan",
+   "seconds": 28.7,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Caulk the bathtub joint",
+     "reasoning": "Photo 1 shows a continuous white bead but only along a short section of one side of the tub joint, so the remainder of the tub perimeter cannot be confirmed from the existing photo.",
+     "exact": false,
+     "ok": true
+    },
+    {
+     "match": [
+      "fan"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Replace the bathroom exhaust fan",
+     "reasoning": "Photo 1 is tightly framed on the tub edge and tile wall with no ceiling in view, so the presence of a ceiling exhaust fan cannot be assessed from the existing photo.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "11-handles-all",
+   "photos": [
+    "cabinet_handles_all"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install handles on the kitchen base cabinet doors",
+   "seconds": 49.0,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [
+    "count_objects",
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "handle"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Install handles on the kitchen base cabinet doors",
+     "reasoning": "Photo 1 shows five white base cabinet doors below the countertop, each with a horizontal metallic bar handle attached and visible near the top of the door, including the partially cropped leftmost door where the handle remains clearly visible.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "12-handles-missing",
+   "photos": [
+    "cabinet_handles_missing"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install handles on the kitchen base cabinet doors",
+   "seconds": 24.5,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "handle"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Install handles on the kitchen base cabinet doors",
+     "reasoning": "Photo 1 shows three base doors with silver bar handles mounted, but it also clearly shows two other base doors with empty drilled holes and no handles attached, so not all doors are done.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "13-handles-plus-faucet",
+   "photos": [
+    "cabinet_handles_all"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "- Install handles on the kitchen base cabinet doors\n- Replace the kitchen faucet",
+   "seconds": 85.1,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer",
+    "count_objects",
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "handle"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Install handles on the kitchen base cabinet doors",
+     "reasoning": "Photo 1 shows five base doors with handles in one run, but the left end is cropped out of frame so additional cabinets to the left and elsewhere are not shown, so all base doors cannot be confirmed.",
+     "exact": false,
+     "ok": true
+    },
+    {
+     "match": [
+      "faucet"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Replace the kitchen faucet",
+     "reasoning": "Photo 1 shows only a section of countertop with no sink basin or faucet visible, but the left end of the cabinets is cropped out of frame so the sink area could be outside the view. The photos cannot prove the faucet is present or missing.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "14-patch-done",
+   "photos": [
+    "drywall_patch_unpainted"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Patch the hole in the drywall",
+   "seconds": 20.6,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "patch",
+      "hole"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Patch the hole in the drywall",
+     "reasoning": "Photo 1 shows a rectangular white patch centered on the beige drywall with no open hole or void visible.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "15-patch-not-painted",
+   "photos": [
+    "drywall_patch_unpainted"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Paint over the drywall patch to match the wall",
+   "seconds": 15.0,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "paint"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Paint over the drywall patch to match the wall",
+     "reasoning": "Photo 1 shows a white square patch in the center of the beige wall with stark color contrast, indicating it has not been painted to match the surrounding wall.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "16-wall-painted-green",
+   "photos": [
+    "wall_painted_even"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Paint the living room wall sage green",
+   "seconds": 27.4,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "paint",
+      "wall"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Paint the living room wall sage green",
+     "reasoning": "Photo 1 shows a large wall painted a uniform muted sage green with no unpainted areas, but it shows only a bare wall with baseboards, outlets and a doorway and no furniture or features that identify the room as the living room, so the location and exact color cannot be confirmed.",
+     "exact": false,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "17-wall-wrong-color",
+   "photos": [
+    "wall_painted_even"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Paint the living room wall white",
+   "seconds": 24.5,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "paint",
+      "wall"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING",
+      "CANT_TELL"
+     ],
+     "predicted": "MISSING",
+     "task": "Paint the living room wall white",
+     "reasoning": "Photo 1 shows the large centered wall painted solid sage green with uniform coverage, not white.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "18-smoke-detector",
+   "photos": [
+    "smoke_detector_ceiling"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install a smoke detector on the hallway ceiling",
+   "seconds": 16.9,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "smoke",
+      "detector"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Install a smoke detector on the hallway ceiling",
+     "reasoning": "Photo 1 shows a white circular smoke detector with an illuminated green light mounted on a textured ceiling above a narrow hallway with white walls, doorways and a ceiling light.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "19-two-detectors-one-visible",
+   "photos": [
+    "smoke_detector_ceiling"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install two smoke detectors in the hallway",
+   "seconds": 32.9,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "count_objects",
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "smoke",
+      "detector"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL",
+      "MISSING"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Install two smoke detectors in the hallway",
+     "reasoning": "Photo 1 shows one smoke detector with green light mounted on the hallway ceiling in clear focus, and the count confirms only one detector is clearly visible. The rest of the hallway ceiling in photo 1 is out of focus and only a limited section is shown, so a second detector could be outside the frame or not resolvable. The existing view cannot confirm two detectors are installed.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "20-faucet-installed",
+   "photos": [
+    "faucet_installed"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install the new kitchen faucet",
+   "seconds": 19.1,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "faucet"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Install the new kitchen faucet",
+     "reasoning": "Photo 1 shows a chrome spring-style faucet with pull-down spray head mounted on the countertop directly behind the stainless steel sink basin.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "21-hidden-leak",
+   "photos": [
+    "faucet_installed"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Fix the leak under the kitchen sink",
+   "seconds": 19.5,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "leak",
+      "sink"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Fix the leak under the kitchen sink",
+     "reasoning": "Photo 1 shows only the sink basin top, faucet, countertop and closed cabinet doors. The pipes and cabinet floor under the sink are not visible, so pooling water, drips or active leaking cannot be checked.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "22-hinges-not-visible",
+   "photos": [
+    "doorknob_closeup"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Replace all three hinges on the bedroom door",
+   "seconds": 20.8,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "hinge"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Replace all three hinges on the bedroom door",
+     "reasoning": "Photo 1 is a tight close-up on the white door and brass doorknob only. No hinges, door edge, or frame attachment is visible, so whether three hinges are installed cannot be judged from the existing photo.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "23-dark-blurry",
+   "photos": [
+    "dark_blurry_room"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Install cover plates on both wall outlets",
+   "seconds": 20.0,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 is extremely dark, blurry and noisy with no wall outlets discernible, so it cannot show two outlets or whether cover plates are installed.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "24-two-photos-both-done",
+   "photos": [
+    "outlets_all_covered",
+    "caulk_tub_done"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "- Install cover plates on both wall outlets\n- Caulk the bathtub joint",
+   "seconds": 58.6,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE"
+     ],
+     "predicted": "DONE",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 shows two side-by-side duplex outlets on the painted wall, each fitted with a white cover plate with screws visible.",
+     "exact": true,
+     "ok": true
+    },
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Caulk the bathtub joint",
+     "reasoning": "Photo 1 shows only wall and outlets with no bathtub visible so it cannot show the joint. photo 2 shows a continuous white bead along the tub to tile joint but only a close-up section with the rest of the perimeter out of frame, so the full joint cannot be confirmed.",
+     "exact": false,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "25-two-photos-both-missing",
+   "photos": [
+    "sample:outlets_one_uncovered",
+    "caulk_tub_gap"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "- Install cover plates on both wall outlets\n- Caulk the bathtub joint",
+   "seconds": 41.7,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "outlet",
+      "cover plate"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Install cover plates on both wall outlets",
+     "reasoning": "Photo 1 shows the left outlet with a white cover plate installed, while the adjacent opening on the right is an open box with exposed brackets and wiring and no cover plate, so both outlets are not covered.",
+     "exact": true,
+     "ok": true
+    },
+    {
+     "match": [
+      "caulk",
+      "tub"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING"
+     ],
+     "predicted": "MISSING",
+     "task": "Caulk the bathtub joint",
+     "reasoning": "Photo 2 shows a close-up of the bathtub rim meeting the tiled wall with an open dark gap with crumbling residue and debris and no continuous fresh caulk bead.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "26-ceiling-painted",
+   "photos": [
+    "sample:hallway_ceiling_painted"
+   ],
+   "before_photos": [],
+   "comparisons": [],
+   "work_order": "Repaint the hallway ceiling",
+   "seconds": 34.2,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "ceiling"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Repaint the hallway ceiling",
+     "reasoning": "Photo 1 shows the near section of hallway ceiling looking white and uniform around the light fixture, but the far end beyond the opening is washed out by bright light and not clearly visible, and only one section is in frame so the full ceiling cannot be confirmed.",
+     "exact": false,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "27-wall-before-after",
+   "photos": [
+    "wall_painted_even"
+   ],
+   "before_photos": [
+    "wall_before_damaged"
+   ],
+   "comparisons": [
+    "same place: the hole next to the left outlets is gone with smooth surface and the wall color changed from stained off-white to solid sage green"
+   ],
+   "work_order": "- Patch the hole in the living room wall next to the outlet\n- Repaint the living room wall sage green",
+   "seconds": 37.4,
+   "inspection_status": "COMPLETED",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "patch",
+      "hole"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Patch the hole in the living room wall next to the outlet",
+     "reasoning": "Photo 2 shows the same wall as the before view with matching doorway trim, outlets, moldings and detector, and the wall next to the lower outlets has no hole with continuous smooth surface.",
+     "exact": true,
+     "ok": true
+    },
+    {
+     "match": [
+      "paint",
+      "green"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "DONE",
+     "task": "Repaint the living room wall sage green",
+     "reasoning": "Photo 2 shows a large wall with uniform muted sage green paint from baseboard to crown molding, confirmed as a change from stained off-white to solid sage green.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "28-before-after-different-room",
+   "photos": [
+    "wall_green_other_room"
+   ],
+   "before_photos": [
+    "wall_before_damaged"
+   ],
+   "comparisons": [
+    "different place: P1 shows off-white wall with hole next to low outlets; P2 shows uniformly sage-green wall with central window and right doorway and no outlets or hole visible"
+   ],
+   "work_order": "- Patch the hole in the living room wall next to the outlet\n- Repaint the living room wall sage green",
+   "seconds": 97.8,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "patch",
+      "hole"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Patch the hole in the living room wall next to the outlet",
+     "reasoning": "Photo 2 shows a sage-green wall with a central window and no outlet visible, while photo 1 shows an off-white wall with a hole next to low outlets. Comparison of trim, outlets, window and doorways shows they are different walls, so the area next to the outlet cannot be assessed for patching.",
+     "exact": true,
+     "ok": true
+    },
+    {
+     "match": [
+      "paint",
+      "green"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Repaint the living room wall sage green",
+     "reasoning": "Photo 2 does not show the same wall as photo 1, with different trim, outlets, window and doorways, so the required wall is not visible after work. Even the wall in photo 2 is not uniformly covered because a continuous lighter strip remains along the bottom at the baseboard. Uniform sage-green coverage of the required living room wall cannot be confirmed.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "29-drywall-before-after",
+   "photos": [
+    "drywall_patch_unpainted"
+   ],
+   "before_photos": [
+    "drywall_hole_before"
+   ],
+   "comparisons": [
+    "same place: the large jagged hole exposing stud and insulation is filled with a flat rectangular patch with no opening visible",
+    "same place: the patched area is solid white contrasting with the surrounding beige wall with no matching beige paint visible"
+   ],
+   "work_order": "- Patch the hole in the hallway wall\n- Paint the patched area to match the wall",
+   "seconds": 68.1,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [
+    "look_closer"
+   ],
+   "requirements": [
+    {
+     "match": [
+      "patch the hole",
+      "hole"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Patch the hole in the hallway wall",
+     "reasoning": "Photo 2 shows the same wall as the before photo with the large hole now filled and no opening visible, but the straight-on close-up shows seam lines and a small corner notch and cannot clearly prove the surface is flush and level without an angled view with raking light.",
+     "exact": false,
+     "ok": true
+    },
+    {
+     "match": [
+      "paint"
+     ],
+     "expected": "MISSING",
+     "acceptable": [
+      "MISSING",
+      "CANT_TELL"
+     ],
+     "predicted": "MISSING",
+     "task": "Paint the patched area to match the wall",
+     "reasoning": "Photo 2 shows the central rectangular patch as solid white contrasting sharply with the surrounding tan beige wall, with no matching beige paint visible on the patch.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "30-caulk-before-after",
+   "photos": [
+    "caulk_tub_done"
+   ],
+   "before_photos": [
+    "caulk_tub_old"
+   ],
+   "comparisons": [
+    "same place: the discolored cracked peeling old caulk along the bathtub-tile joint is replaced with a continuous clean white bead and flaking residue on the tile is gone"
+   ],
+   "work_order": "Remove the old caulk around the bathtub and apply new caulk",
+   "seconds": 34.1,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "caulk"
+     ],
+     "expected": "DONE",
+     "acceptable": [
+      "DONE",
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Remove old caulk around the bathtub and apply new caulk",
+     "reasoning": "Photo 2 shows a smooth continuous white bead with no cracking or peeling along the short wall section in frame, and the corner that was cracked and peeling in photo 1 now looks clean. However photo 2 is a close-up of only one wall joint and the rest of the bathtub perimeter is outside the frame, so the full perimeter cannot be verified.",
+     "exact": false,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  },
+  {
+   "id": "31-before-photo-only-shows-the-wall",
+   "photos": [
+    "doorknob_closeup"
+   ],
+   "before_photos": [
+    "wall_before_damaged"
+   ],
+   "comparisons": [
+    "different place: no visible change"
+   ],
+   "work_order": "Patch the hole in the living room wall next to the outlet",
+   "seconds": 31.0,
+   "inspection_status": "NEEDS_USER_ACTION",
+   "error": null,
+   "tool_calls": [],
+   "requirements": [
+    {
+     "match": [
+      "patch",
+      "hole"
+     ],
+     "expected": "CANT_TELL",
+     "acceptable": [
+      "CANT_TELL"
+     ],
+     "predicted": "CANT_TELL",
+     "task": "Patch the hole in the living room wall next to the outlet",
+     "reasoning": "Photo 2 shows only a close-up of a white door and brass doorknob with no wall, outlet, or hole area visible, so the patched status cannot be assessed. Photo 1 is a before view and cannot prove the repair.",
+     "exact": true,
+     "ok": true
+    }
+   ],
+   "unlabelled": []
+  }
+ ]
+}

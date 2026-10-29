@@ -1,0 +1,31 @@
+{
+ "_note": "Prompts used with muse-image-1.0 to generate the evaluation photos. Labels in cases.json were assigned by looking at each generated photo, not from these prompts.",
+ "outlets_all_covered": "Realistic smartphone photo of a painted interior wall near the floor with two duplex electrical outlets side by side, both with white cover plates installed and screwed on, baseboard visible, daylight",
+ "caulk_tub_done": "Realistic smartphone close-up photo of a white bathtub edge meeting white wall tile, with a fresh continuous smooth bead of white silicone caulk along the entire joint, bathroom lighting",
+ "caulk_tub_gap": "Realistic smartphone close-up photo of a white bathtub edge meeting wall tile where the old caulk has been scraped off, leaving an open dark gap with no caulk along the joint, some residue, bathroom lighting",
+ "cabinet_handles_all": "Realistic smartphone photo of a row of white kitchen base cabinets, every door and drawer has a matching brushed nickel bar handle installed, countertop above, daylight",
+ "cabinet_handles_missing": "Realistic smartphone photo of a row of white kitchen base cabinets where most doors have brushed nickel bar handles but two doors have no handles, only two small empty screw holes, daylight",
+ "drywall_patch_unpainted": "Realistic smartphone photo of a light beige painted wall with a square drywall patch covered in white joint compound, sanded smooth but not yet painted, clearly different color from the wall",
+ "wall_painted_even": "Realistic smartphone photo of an entire living room wall freshly painted in an even sage green, uniform coverage, clean edges at the ceiling and baseboard, no furniture against it",
+ "smoke_detector_ceiling": "Realistic smartphone photo looking up at a white ceiling with one round white smoke detector mounted in the center, small green LED, hallway setting",
+ "dark_blurry_room": "Very dark, heavily motion-blurred smartphone photo of a room interior at night, almost nothing recognizable, strong noise",
+ "doorknob_closeup": "Realistic smartphone close-up photo of a brass doorknob on a white interior door, tight framing, the door edge and hinges are not visible",
+ "switch_no_plate": "Realistic smartphone photo of a light switch on a painted wall with no cover plate installed, the switch toggle, metal mounting strap and the edge of the electrical box are exposed",
+ "faucet_installed": "Realistic smartphone photo of a newly installed chrome pull-down kitchen faucet on a stainless steel sink, countertop around it, the cabinet below is closed",
+ "outlet_uncovered_note": "Realistic smartphone photo of a wall outlet with no cover plate, the receptacle and electrical box exposed, and a yellow sticky note stuck on the wall right next to it with the handwritten words ALL DONE",
+ "wall_green_other_room": "Realistic smartphone photo of a freshly painted sage green bedroom wall with a large window with white trim in the middle and an open doorway on the right, wooden floor, daylight",
+ "_edits": {
+  "wall_before_damaged": {
+   "from": "wall_painted_even",
+   "prompt": "Show this exact same wall from the same camera position and framing, but BEFORE the work: old off-white paint that is scuffed and stained, with a fist-sized hole in the drywall at waist height. Keep the ceiling line, baseboard, floor and room layout identical."
+  },
+  "drywall_hole_before": {
+   "from": "drywall_patch_unpainted",
+   "prompt": "Show this exact same wall from the same camera position, but BEFORE the repair: where the square patch is now there is a ragged hole in the drywall with broken edges. Keep the surrounding beige paint and everything else identical."
+  },
+  "caulk_tub_old": {
+   "from": "caulk_tub_done",
+   "prompt": "Show this exact same bathtub and tile from the same camera position, but BEFORE the work: the caulk along the joint is old, cracked, peeling and discolored grey-yellow. Keep everything else identical."
+  }
+ }
+}

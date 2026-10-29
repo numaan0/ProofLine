@@ -1,27 +1,29 @@
-import { forwardRef } from \"react\"
-import { cn } from \"../../lib/utils\"
+import { forwardRef } from "react"
+import { cn } from "../../lib/utils"
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: \"primary\" | \"secondary\" | \"ghost\"
-  size?: \"sm\" | \"md\" | \"lg\"
+  variant?: "primary" | "secondary" | "ghost" | "subtle" | "outline"
+  size?: "sm" | "md" | "lg"
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = \"primary\", size = \"md\", ...props }, ref) => {
+  ({ className, variant = "primary", size = "md", ...props }, ref) => {
     return (
       <button
         ref={ref}
         className={cn(
-          \"inline-flex items-center justify-center rounded-lg font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-50\",
+          "inline-flex items-center justify-center rounded-lg font-medium tracking-tight transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss/25 focus-visible:ring-offset-1 focus-visible:ring-offset-chalk-50 disabled:pointer-events-none disabled:opacity-40",
           {
-            \"bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25\": variant === \"primary\",
-            \"bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 shadow-sm\": variant === \"secondary\",
-            \"hover:bg-gray-100 text-gray-700\": variant === \"ghost\",
+            "bg-ink text-white hover:bg-ink-200 active:bg-ink shadow-subtle": variant === "primary",
+            "bg-white text-ink border border-ink/10 hover:bg-chalk-50/90 hover:border-ink/18 shadow-subtle": variant === "secondary",
+            "bg-transparent text-ink-100 hover:text-ink hover:bg-ink/5": variant === "ghost",
+            "text-ink-100 hover:text-ink border border-transparent hover:border-ink/10 hover:bg-white/70": variant === "subtle",
+            "bg-transparent text-ink border border-ink/12 hover:bg-white/70 hover:border-ink/18": variant === "outline",
           },
           {
-            \"h-9 px-3 text-sm\": size === \"sm\",
-            \"h-10 px-4 text-sm\": size === \"md\",
-            \"h-11 px-6 text-base\": size === \"lg\",
+            "h-8 px-2.5 text-[12px] gap-1.5": size === "sm",
+            "h-9 px-3.5 text-[13px] gap-1.5": size === "md",
+            "h-10 px-4 text-[13px] gap-2": size === "lg",
           },
           className
         )}
@@ -30,6 +32,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     )
   }
 )
-Button.displayName = \"Button\"
+Button.displayName = "Button"
 
 export { Button }

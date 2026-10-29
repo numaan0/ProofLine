@@ -1,15 +1,15 @@
 {
-  \"name\": \"proofline\",
-  \"version\": \"1.0.0\",
-  \"private\": true,
-  \"description\": \"ProofLine - AI QA Inspector for contractor photo verification\",
-  \"scripts\": {
-    \"dev\": \"concurrently \\\"npm run dev:backend\\\" \\\"npm run dev:frontend\\\"\",
-    \"dev:backend\": \"cd backend && python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000\",
-    \"dev:frontend\": \"cd frontend && npm run dev\",
-    \"install:all\": \"npm install && pip install -r backend/requirements.txt && npm install --prefix frontend\"
+  "name": "proofline",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ProofLine - AI QA Inspector for contractor photo verification",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && .\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && .\\.venv\\Scripts\\pip.exe install -r requirements.txt && cd .. && npm install --prefix frontend"
   },
-  \"devDependencies\": {
-    \"concurrently\": \"^9.1.0\"
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

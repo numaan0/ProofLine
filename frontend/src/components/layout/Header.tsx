@@ -1,30 +1,40 @@
-import { ShieldCheck, Sparkles } from \"lucide-react\"
+import { cn } from '../../lib/utils'
+import type { Route } from '../../lib/router'
+import { NotificationBell } from './NotificationBell'
 
-export function Header() {
+interface HeaderProps {
+  route: Route
+}
+
+export function Header({ route }: HeaderProps) {
+  const links = [
+    { href: '#/inspections', label: 'Inspections', active: route.name === 'list' || route.name === 'inspection' },
+    { href: '#/new', label: 'New inspection', active: route.name === 'new' },
+  ]
   return (
-    <header className=\"sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50\">
-      <div className=\"max-w-[1600px] mx-auto px-6 py-4\">
-        <div className=\"flex items-center justify-between\">
-          <div className=\"flex items-center gap-3\">
-            <div className=\"relative\">
-              <div className=\"absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg blur opacity-75\"></div>
-              <div className=\"relative bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg\">
-                <ShieldCheck className=\"w-6 h-6 text-white\" />
-              </div>
-            </div>
-            <div>
-              <div className=\"flex items-center gap-2\">
-                <h1 className=\"text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent\">ProofLine</h1>
-                <Sparkles className=\"w-4 h-4 text-amber-500\" />
-              </div>
-              <p className=\"text-xs text-gray-500\">AI-Powered QA Inspector</p>
-            </div>
-          </div>
-          <div className=\"flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200/50\">
-            <div className=\"w-2 h-2 bg-emerald-500 rounded-full animate-pulse\"></div>
-            <span className=\"text-xs font-medium text-blue-700\">AI Ready</span>
-          </div>
+    <header className="sticky top-0 z-40 bg-chalk/92 backdrop-blur-md border-b border-ink/10">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 h-14 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-6 sm:gap-10 min-w-0">
+          <a href="#/new" className="font-display text-[15px] font-semibold tracking-[0.18em] text-ink shrink-0">
+            PROOFLINE
+          </a>
+          <nav aria-label="Primary" className="flex items-center gap-1">
+            {links.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                aria-current={l.active ? 'page' : undefined}
+                className={cn(
+                  'px-2.5 sm:px-3 py-1.5 rounded-md text-[13px] tracking-tight transition-colors whitespace-nowrap',
+                  l.active ? 'text-ink bg-ink/[0.06] font-medium' : 'text-ink-100 hover:text-ink hover:bg-ink/[0.04]',
+                )}
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
         </div>
+        <NotificationBell />
       </div>
     </header>
   )

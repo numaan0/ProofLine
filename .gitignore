@@ -24,8 +24,7 @@ build/
 # Uploads and generated files
 backend/app/static/uploads/*
 !backend/app/static/uploads/.gitkeep
-data/samples/*
-!data/samples/.gitkeep
+# Demo samples are committed on purpose
 
 # IDE
 .vscode/
@@ -44,3 +43,6 @@ logs/
 # Cache
 .cache/
 .pytest_cache/
+
+# Local database
+data/db/

@@ -4,8 +4,8 @@ from typing import List, Optional
 class Task(BaseModel):
     id: int
     description: str
-    status: str = \"PENDING\"  # DONE, MISSING, CANT_TELL, PENDING
-    reasoning: str = \"\"
+    status: str = "PENDING"
+    reasoning: str = ""
     evidence: List[str] = []
 
 class InspectionRequest(BaseModel):
