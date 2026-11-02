@@ -50,9 +50,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  createInspection(workOrder: string, files: File[], beforeFiles: File[] = []) {
+  createInspection(workOrder: string, files: File[], beforeFiles: File[] = [], notifyEmail = '') {
     const form = new FormData()
     form.append('work_order_text', workOrder)
+    if (notifyEmail.trim()) form.append('notify_email', notifyEmail.trim())
     files.forEach((f) => form.append('files', f))
     beforeFiles.forEach((f) => form.append('before_files', f))
     return request<{ inspection_id: string; status: string }>('/api/inspections', { method: 'POST', body: form })
@@ -74,6 +75,8 @@ export const api = {
   retry: (id: string) => request<{ status: string }>(`/api/inspections/${id}/retry`, { method: 'POST' }),
   inspection: (id: string) => request<InspectionStatus>(`/api/inspections/${id}`),
   report: (id: string) => request<Report>(`/api/inspections/${id}/report`),
+  email: (id: string, emailId: string) =>
+    request<{ subject: string; to: string | null; body: string; status: string }>(`/api/inspections/${id}/emails/${emailId}`),
   inspections: () => request<{ inspections: InspectionListItem[] }>('/api/inspections'),
   notifications: () => request<{ unread_count: number; notifications: AppNotification[] }>('/api/notifications'),
   markRead: (id: string) => request(`/api/notifications/${id}/read`, { method: 'POST' }),

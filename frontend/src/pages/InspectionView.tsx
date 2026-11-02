@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AlertTriangle, Loader2 } from 'lucide-react'
+import { AlertTriangle, Loader2, Mail } from 'lucide-react'
 import { EvidenceViewer } from '../components/report/EvidenceViewer'
 import { StageProgress } from '../components/report/StageProgress'
 import { TaskPanel } from '../components/report/TaskPanel'
@@ -7,7 +7,7 @@ import { Button } from '../components/ui/Button'
 import { ApiError, TERMINAL_STATUSES, api } from '../lib/api'
 import { OUTCOME_COPY, formatDateTime } from '../lib/format'
 import { navigate } from '../lib/router'
-import type { ApiErrorDetail, InspectionStatus, Report, ReportTask } from '../lib/types'
+import type { ApiErrorDetail, InspectionStatus, Report, ReportEmail, ReportTask } from '../lib/types'
 import { cn } from '../lib/utils'
 
 const POLL_MS = 1500
@@ -147,6 +147,7 @@ function ReportWorkspace({ report, initialTaskId, connectionError, onRecheckStar
         {connectionError && (
           <p className="mt-3 text-[12px] text-brick-300" role="status">Connection problem: {connectionError.message}</p>
         )}
+        {report.emails.length > 0 && <EmailSummaryCard inspectionId={report.inspection_id} email={report.emails[report.emails.length - 1]} />}
       </header>
 
       <div className="grid grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -214,5 +215,47 @@ function CenteredMessage({ title, body, code, icon, children }: { title: string;
       {code && <p className="mt-2 font-mono text-[12px] text-ink-50">Error code: {code}</p>}
       <div className="mt-6 flex flex-wrap gap-2">{children}</div>
     </main>
+  )
+}
+
+function EmailSummaryCard({ inspectionId, email }: { inspectionId: string; email: ReportEmail }) {
+  const [body, setBody] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
+  const [failed, setFailed] = useState(false)
+  // A newer summary (after a follow-up re-check) replaces the preview.
+  useEffect(() => { setBody(null); setOpen(false) }, [email.id])
+
+  const toggle = async () => {
+    setOpen((o) => !o)
+    if (body !== null) return
+    try {
+      setBody((await api.email(inspectionId, email.id)).body)
+    } catch {
+      setFailed(true)
+    }
+  }
+  const line = email.status === 'SENT' ? `Summary emailed to ${email.to}`
+    : email.to ? `Summary for ${email.to} saved to the outbox` : 'Summary saved to the outbox'
+
+  return (
+    <div className="mt-3 rounded-lg border border-ink/10 bg-paper/70 max-w-3xl">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3.5 py-2.5 text-[13px]">
+        <Mail className={cn('w-4 h-4 shrink-0', email.status === 'FAILED' ? 'text-brick' : 'text-moss')} aria-hidden />
+        <span className="text-ink">{line}</span>
+        {email.status !== 'SENT' && email.detail && <span className="text-ink-50">{email.detail}</span>}
+        <button type="button" onClick={toggle} aria-expanded={open} className="ml-auto text-[12px] text-moss-300 hover:underline">
+          {open ? 'Hide email' : 'Preview email'}
+        </button>
+      </div>
+      {open && (
+        <div className="border-t border-ink/10 px-4 py-3">
+          <p className="text-[12px] text-ink-50">Subject</p>
+          <p className="text-[13px] text-ink font-medium mb-2.5">{email.subject}</p>
+          {failed ? <p className="text-[13px] text-brick-300">The email could not be loaded.</p>
+            : body === null ? <p className="text-[13px] text-ink-100 flex items-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden />Loading…</p>
+            : <pre className="whitespace-pre-wrap font-mono text-[12px] leading-relaxed text-ink-100 max-h-[320px] overflow-y-auto">{body}</pre>}
+        </div>
+      )}
+    </div>
   )
 }

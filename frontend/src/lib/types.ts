@@ -113,6 +113,17 @@ export interface Report {
   images: ReportImage[]
   observations: ReportObservation[]
   tasks: ReportTask[]
+  emails: ReportEmail[]
+}
+
+/** An email summary written when a run or re-check finished. OUTBOX/FAILED copies are kept locally. */
+export interface ReportEmail {
+  id: string
+  to: string | null
+  subject: string
+  status: 'SENT' | 'OUTBOX' | 'FAILED'
+  detail: string | null
+  created_at: string
 }
 
 export interface InspectionListItem {

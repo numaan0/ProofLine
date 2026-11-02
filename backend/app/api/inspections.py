@@ -16,9 +16,10 @@ from ..guardrails.errors import (
 from ..guardrails.preflight import SemanticPreflight
 from ..guardrails.validators import PhotoValidator, RequestValidator, WorkOrderValidator
 from ..services.agent.orchestrator import orchestrator
+from ..services.email_summary import valid_email
 from ..services.persistence import async_session, init_db
 from app.models.inspection_models import (
-    EvidenceLink, FollowUpRequest, Inspection, InspectionImage, Notification, Observation, Task,
+    EmailSummary, EvidenceLink, FollowUpRequest, Inspection, InspectionImage, Notification, Observation, Task,
 )
 
 router = APIRouter()
@@ -90,7 +91,7 @@ async def store_images(session, inspection_id: str, accepted: List[dict]) -> Lis
 @router.post("/inspections", status_code=202)
 async def create_inspection(background_tasks: BackgroundTasks, work_order_text: str = Form(""),
                             files: List[UploadFile] = File(default=[]), before_files: List[UploadFile] = File(default=[]),
-                            device: str = Depends(current_device)):
+                            notify_email: str = Form(""), device: str = Depends(current_device)):
     # Cheap deterministic checks first; the model-based scope check runs only on otherwise valid input.
     if before_files and not files:
         raise GuardrailViolation(ValidationErrorDetail(
@@ -98,6 +99,12 @@ async def create_inspection(background_tasks: BackgroundTasks, work_order_text: 
             message="Before photos were added, but no after photos.",
             suggestion="Add at least one photo of the finished work; before photos are only compared against it.",
             retryable=True, field="files"))
+    notify_email = notify_email.strip()
+    if notify_email and not valid_email(notify_email):
+        raise GuardrailViolation(ValidationErrorDetail(
+            code=ErrorCode.INVALID_EMAIL, stage=ErrorStage.REQUEST_VALIDATION,
+            message="That email address doesn't look right.",
+            suggestion="Use a full address like name@company.com, or leave it empty.", retryable=True, field="notify_email"))
     RequestValidator.validate_request_meta(work_order_text, len(files) + len(before_files))
     WorkOrderValidator.validate_deterministic(work_order_text)
     accepted = await read_and_validate_files(files, before_files)
@@ -105,7 +112,8 @@ async def create_inspection(background_tasks: BackgroundTasks, work_order_text: 
 
     first_line = next((l.strip(" -*•\t") for l in work_order_text.splitlines() if l.strip()), "Inspection")
     async with async_session() as session:
-        insp = Inspection(work_order_text=work_order_text.strip(), status="QUEUED", title=first_line[:80], device_id=device)
+        insp = Inspection(work_order_text=work_order_text.strip(), status="QUEUED", title=first_line[:80], device_id=device,
+                          notify_email=notify_email or None)
         session.add(insp)
         await session.flush()
         await store_images(session, insp.id, accepted)
@@ -248,6 +256,9 @@ async def get_report(inspection_id: str, device: str = Depends(current_device)):
         follow_ups = (await session.execute(
             select(FollowUpRequest).where(FollowUpRequest.inspection_id == inspection_id)
         )).scalars().all()
+        emails = (await session.execute(
+            select(EmailSummary).where(EmailSummary.inspection_id == inspection_id).order_by(EmailSummary.created_at)
+        )).scalars().all()
 
         steps_by_task: dict = {}
         for step in insp.agent_trace or []:
@@ -275,6 +286,8 @@ async def get_report(inspection_id: str, device: str = Depends(current_device)):
                 "analysis_state": i.analysis_state, "follow_up_for": follow_up_image.get(i.id), "role": i.role or "after",
                 "url": f"/api/inspections/{inspection_id}/images/{i.id}",
             } for i in images],
+            "emails": [{"id": m.id, "to": m.to_address, "subject": m.subject, "status": m.status, "detail": m.detail,
+                        "created_at": m.created_at.isoformat() + "Z"} for m in emails],
             "observations": [{
                 "id": o.id, "image_id": o.image_id, "task_ids": o.relevant_task_ids or [],
                 "source": (o.meta_data or {}).get("source"), "compared_with": (o.meta_data or {}).get("before_image_id"),
@@ -298,6 +311,17 @@ async def get_report(inspection_id: str, device: str = Depends(current_device)):
                 "investigation": steps_by_task.get(t.id, []),
             } for t in tasks],
         }
+
+
+@router.get("/inspections/{inspection_id}/emails/{email_id}")
+async def get_email(inspection_id: str, email_id: str, device: str = Depends(current_device)):
+    async with async_session() as session:
+        await _get_inspection_or_404(session, inspection_id, device)
+        m = await session.get(EmailSummary, email_id)
+        if not m or m.inspection_id != inspection_id:
+            raise HTTPException(404, detail={"code": "NOT_FOUND", "message": "Email not found."})
+        return {"id": m.id, "to": m.to_address, "subject": m.subject, "body": m.body_text, "status": m.status,
+                "detail": m.detail, "created_at": m.created_at.isoformat() + "Z"}
 
 
 @router.get("/inspections/{inspection_id}/images/{image_id}")

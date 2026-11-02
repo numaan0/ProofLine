@@ -58,6 +58,8 @@ export default function NewInspection() {
   const [dragActive, setDragActive] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [workOrderError, setWorkOrderError] = useState<ApiErrorDetail | null>(null)
+  const [notifyEmail, setNotifyEmail] = useState('')
+  const [emailError, setEmailError] = useState<ApiErrorDetail | null>(null)
   const [formError, setFormError] = useState<ApiErrorDetail | null>(null)
   const [loadingSample, setLoadingSample] = useState<string | null>(null)
   const [cases, setCases] = useState<SampleCase[] | null>(null)
@@ -67,7 +69,7 @@ export default function NewInspection() {
   const beforeInputRef = useRef<HTMLInputElement>(null)
   const photosRef = useRef(photos)
   photosRef.current = photos
-  const ids = { workOrder: useId(), workOrderHelp: useId(), workOrderError: useId(), photos: useId(), before: useId(), beforeHelp: useId(), cases: useId() }
+  const ids = { workOrder: useId(), workOrderHelp: useId(), workOrderError: useId(), photos: useId(), before: useId(), beforeHelp: useId(), cases: useId(), email: useId(), emailHelp: useId() }
 
   useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.previewUrl)), [])
 
@@ -157,7 +159,7 @@ export default function NewInspection() {
     setFormError(null)
     const submitted = { upload: usableAfter, before: usableBefore }
     try {
-      const res = await api.createInspection(workOrder, usableAfter.map((p) => p.file), usableBefore.map((p) => p.file))
+      const res = await api.createInspection(workOrder, usableAfter.map((p) => p.file), usableBefore.map((p) => p.file), notifyEmail)
       if (usingSample) demoInspections.add(res.inspection_id)
       navigate(`/inspections/${res.inspection_id}`)
     } catch (err) {
@@ -166,6 +168,7 @@ export default function NewInspection() {
       const fileErrors = new Map<string, ApiErrorDetail>()
       for (const d of details) {
         if (d.field === 'work_order_text') setWorkOrderError(d)
+        else if (d.field === 'notify_email') setEmailError(d)
         else if (d.file_id) {
           // upload_NN / before_NN is the 1-based position in that submitted list
           const [kind, n] = d.file_id.split('_')
@@ -285,6 +288,30 @@ export default function NewInspection() {
                 <p className="font-medium">{workOrderError.message}</p>
                 {workOrderError.suggestion && <p className="text-brick-200/90 mt-0.5">{workOrderError.suggestion}</p>}
               </div>
+            )}
+          </div>
+          <div className="mt-5">
+            <label htmlFor={ids.email} className="text-[14px] font-medium text-ink">
+              Email the summary to <span className="font-normal text-ink-50">(optional)</span>
+            </label>
+            <p id={ids.emailHelp} className="text-[13px] text-ink-100 mt-0.5 mb-2">Sent when the report is ready, and again after a follow-up photo is checked.</p>
+            <input
+              id={ids.email}
+              type="email"
+              autoComplete="email"
+              value={notifyEmail}
+              onChange={(e) => { setNotifyEmail(e.target.value); setEmailError(null) }}
+              placeholder="manager@company.com"
+              aria-describedby={ids.emailHelp}
+              aria-invalid={!!emailError}
+              className={cn(
+                'w-full h-10 px-3.5 rounded-lg border bg-paper text-[14px] text-ink placeholder:text-ink-50/70 outline-none transition-colors',
+                'focus:ring-2 focus:ring-moss/25 focus:border-moss/50',
+                emailError ? 'border-brick/60' : 'border-ink/15',
+              )}
+            />
+            {emailError && (
+              <p role="alert" className="mt-2 text-[13px] text-brick-300">{emailError.message} {emailError.suggestion}</p>
             )}
           </div>
         </section>

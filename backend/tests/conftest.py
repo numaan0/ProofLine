@@ -16,6 +16,7 @@ def temp_db(tmp_path, monkeypatch):
     import app.api.inspections as api_mod
     import app.api.notifications as notif_mod
     import app.services.agent.orchestrator as orch_mod
+    import app.services.email_summary as email_mod
 
     engine = create_async_engine(f"sqlite+aiosqlite:///{tmp_path / 'test.db'}")
     session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -28,6 +29,11 @@ def temp_db(tmp_path, monkeypatch):
     monkeypatch.setattr(orch_mod, "async_session", session_factory)
     monkeypatch.setattr(api_mod, "async_session", session_factory)
     monkeypatch.setattr(notif_mod, "async_session", session_factory)
+    # Email summaries: throwaway outbox, and never a real SMTP server from backend/.env.
+    monkeypatch.setattr(email_mod, "async_session", session_factory)
+    monkeypatch.setattr(email_mod, "OUTBOX_DIR", tmp_path / "outbox")
+    monkeypatch.setattr(email_mod, "_config", lambda: dict.fromkeys(
+        ("SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASSWORD", "SMTP_FROM", "APP_URL"), ""))
     yield session_factory
     asyncio.run(engine.dispose())
 

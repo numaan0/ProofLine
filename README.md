@@ -62,6 +62,10 @@ Two deterministic rules keep this conservative:
 
 If the comparison call fails, the inspection fails with a retryable error instead of silently ignoring the before photos.
 
+### Email summary
+
+Each inspection can name an email address. When the report is ready, and again after a follow-up photo is checked, ProofLine writes a plain-text summary: problems first, each requirement with its verdict and reason, the exact photo still needed, and a link to the report. It is sent over SMTP when `SMTP_HOST` is set in `backend/.env`; otherwise it is kept in `data/outbox/` and the report shows **Preview email**. Delivery problems are recorded on the message and never change the inspection.
+
 ### Statuses mean specific things
 
 | Status | Meaning |
@@ -159,12 +163,13 @@ cd backend
 .venv\Scripts\python -m pytest -q
 ```
 
-71 tests. **All of them mock the Meta API**, so none need network access or a key. They cover:
+76 tests. **All of them mock the Meta API**, so none need network access or a key. They cover:
 
 - **False completion:** `DONE` with no cited evidence, or citing invented observation IDs, is downgraded to `CANT_TELL`, in both the verifier and the investigation loop.
 - **Failure separation:** provider timeouts and rate limits produce `FAILED` with an error code and leave tasks unassessed, never `CANT_TELL`. A model outage inside the optional investigation loop does not fail the inspection.
 - **Guardrails:** empty work order, no files, corrupt files, undersized images, and every bad file reported at once. A preflight outage returns 503, not a rejection of the user's input.
 - **Before and after:** a verdict citing only before photos is downgraded; a photo of a different place can't confirm or reject work; before photos are compared, not analyzed alone; a comparison outage fails the inspection; a follow-up retake is compared with the before photo.
+- **Email summary:** kept in the outbox without SMTP, sent when configured, a delivery failure never changes the inspection, problems listed first, invalid addresses rejected, another device cannot read it.
 - **Follow-up photos:** only the open requirement is re-checked; an uncited `DONE` is still downgraded; a model outage keeps the earlier result; uploads are rejected when nothing is waiting or a re-check is running.
 - **Provider resilience:** a reasoning cut-off, invalid JSON, and a transient 429/5xx each get exactly one retry; auth errors are not retried.
 - **Retry:** only `FAILED` inspections can be retried, and a retry starts from a clean slate.
@@ -180,7 +185,8 @@ Live behavior was checked separately with `scripts/smoke_meta.py` and end-to-end
 
 | Method | Route | Purpose |
 |---|---|---|
-| `POST` | `/api/inspections` | Validate and create (`files`, optional `before_files`); runs in the background. Returns `202` with `inspection_id` |
+| `POST` | `/api/inspections` | Validate and create (`files`, optional `before_files` and `notify_email`); runs in the background. Returns `202` with `inspection_id` |
+| `GET` | `/api/inspections/{id}/emails/{email_id}` | The email summary's subject and body |
 | `GET` | `/api/inspections` | History with status, outcome and counts |
 | `GET` | `/api/inspections/{id}` | Live status and stage (polled by the UI) |
 | `GET` | `/api/inspections/{id}/report` | Tasks, observations, evidence links, SAM regions, follow-ups, investigation steps |

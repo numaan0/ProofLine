@@ -16,6 +16,7 @@ from sqlalchemy import select
 
 from ...guardrails.errors import ErrorCode
 from ..meta_client import ModelError
+from ..email_summary import send_summary
 from ..persistence import async_session
 from ..segmentation import segment_object
 from app.models.inspection_models import (
@@ -200,6 +201,7 @@ class Orchestrator:
         else:
             await self._notify(inspection_id, "INSPECTION_COMPLETED", "Inspection report ready",
                                "All requirements are supported by the submitted photos.")
+        await send_summary(inspection_id)
 
     async def recheck_task(self, inspection_id: str, task_id: str, new_image_ids: List[str]) -> None:
         """Re-verify one requirement after follow-up photos were attached.
@@ -345,6 +347,7 @@ class Orchestrator:
         label = {"DONE": "now supported", "MISSING": "shown as not met"}.get(verdict["status"], "still needs evidence")
         await self._notify(inspection_id, "FOLLOW_UP_CHECKED", "Follow-up photo checked",
                            f'"{task["description"][:80]}" is {label}.')
+        await send_summary(inspection_id, update=True)
 
     async def _compare(self, inspection_id: str, before_rows: List[Dict[str, Any]], after_rows: List[Dict[str, Any]],
                        tasks: List[Dict[str, Any]], alias_of: Dict[str, str], observations: List[Dict[str, Any]],

@@ -46,3 +46,4 @@ logs/
 
 # Local database
 data/db/
+data/outbox/

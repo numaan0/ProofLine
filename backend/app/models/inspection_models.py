@@ -18,6 +18,7 @@ class Inspection(Base):
     id = Column(String, primary_key=True, default=lambda: gen_id("ins"))
     title = Column(String, nullable=True)
     device_id = Column(String, nullable=True, index=True)  # anonymous browser that created it (app/device.py)
+    notify_email = Column(String, nullable=True)  # where the email summary goes (optional)
     work_order_text = Column(Text, nullable=False)
     status = Column(String, default="QUEUED")
     overall_outcome = Column(String, nullable=True)
@@ -33,6 +34,7 @@ class Inspection(Base):
     observations = relationship("Observation", back_populates="inspection", cascade="all, delete-orphan")
     follow_ups = relationship("FollowUpRequest", back_populates="inspection", cascade="all, delete-orphan")
     notifications = relationship("Notification", back_populates="inspection", cascade="all, delete-orphan")
+    emails = relationship("EmailSummary", cascade="all, delete-orphan")
 
 
 class InspectionImage(Base):
@@ -129,3 +131,16 @@ class Notification(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     inspection = relationship("Inspection", back_populates="notifications")
+
+
+class EmailSummary(Base):
+    __tablename__ = "email_summaries"
+
+    id = Column(String, primary_key=True, default=lambda: gen_id("mail"))
+    inspection_id = Column(String, ForeignKey("inspections.id"), nullable=False)
+    to_address = Column(String, nullable=True)
+    subject = Column(String, nullable=False)
+    body_text = Column(Text, nullable=False)
+    status = Column(String, default="OUTBOX")  # SENT | OUTBOX (kept locally) | FAILED (kept locally)
+    detail = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
