@@ -1,41 +1,93 @@
+<div align="center">
+
 # ProofLine
 
 **Visual work verification that knows what it can't see.**
 
-**Try it live: https://proofline-fm47.onrender.com** (free hosting: the first load after a quiet spell can take up to a minute). Click "Try it with a sample job", or pick any of the 31 labelled cases under "All sample jobs".
+[![Live demo](https://img.shields.io/badge/Live_demo-open_ProofLine-2f6f4f?style=for-the-badge)](https://proofline-fm47.onrender.com)
 
-ProofLine checks a maintenance work order against completion photos. For each requirement it says whether the photos support completion, show that the work is *not* done, or don't show enough to tell. When the photos fall short, it says exactly which photo to take next. Every finding links back to the observations and photo regions it rests on.
+![Muse Spark 1.3](https://img.shields.io/badge/Muse_Spark-1.3-0866FF?style=flat-square)
+![SAM 3.1](https://img.shields.io/badge/SAM-3.1-0866FF?style=flat-square)
+![False completions](https://img.shields.io/badge/false_completions-0_of_22-2f6f4f?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-77_passing-2f6f4f?style=flat-square)
+![FastAPI](https://img.shields.io/badge/FastAPI-Python_3.11-009688?style=flat-square)
+![React](https://img.shields.io/badge/React-TypeScript_·_Vite-3178C6?style=flat-square)
+
+[How it works](#how-it-works) · [Evaluation](#evaluation) · [Run it locally](#run-it-locally) · [Deploy](#deploy-render) · [API](#api)
+
+</div>
+
+<br/>
+
+<p align="center">
+  <img src="docs/images/report.jpg" alt="ProofLine report: the outlet requirement is Not met, with a SAM 3.1 box on the open electrical box and the cited evidence beside it" width="100%"/>
+</p>
+
+ProofLine checks a maintenance work order against completion photos. For each requirement it says whether the photos **support** completion, show that the work is **not done**, or **don't show enough to tell**. When the photos fall short, it says exactly which photo to take next. Every finding links back to the observations and photo regions it rests on.
 
 It is built for residential maintenance and small renovation jobs, the kind where a coordinator receives "done!" plus three phone photos and has to decide whether to close the ticket.
 
+> [!NOTE]
 > ProofLine reports what the submitted photos show. It does not certify safety, code compliance, or hidden work such as wiring or plumbing behind walls.
+
+### Try it in a minute
+
+Open **[proofline-fm47.onrender.com](https://proofline-fm47.onrender.com)** and click **Try it with a sample job**, or pick any of the 31 labelled cases under **All sample jobs**. It runs on free hosting, so the first load after a quiet spell can take up to a minute.
 
 ---
 
-## What happens when you run an inspection
+## What it does
 
+| | |
+|---|---|
+| **Line-by-line verdicts** | Each requirement gets Supported, Not met or Needs evidence, citing the photo observations it relied on |
+| **Asks instead of guessing** | When a photo can't prove a line, it names the exact photo needed. A follow-up re-checks only that line |
+| **Before and after** | For repairs, it first confirms both photos show the same place using fixed features, then looks at what changed |
+| **An agent on a budget** | Unclear verdicts get a bounded tool loop: look closer, or count objects with SAM 3.1 |
+| **Code has the last word** | A deterministic check downgrades any "done" that doesn't cite real evidence |
+| **Email summary** | Problems first, plus the exact photo still needed, after every run and re-check |
+| **Private per device** | No sign-in: each browser sees only its own inspections and notifications |
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/sticky-note.jpg" alt="A sticky note reading ALL DONE next to an uncovered outlet: ProofLine marks the requirement Not met, with SAM boxes on the exposed outlets"/></td>
+    <td width="50%"><img src="docs/images/before-after.jpg" alt="Before and after photos side by side: ProofLine confirms the same wall from fixed features and marks the patch Supported"/></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>A sticky note saying "ALL DONE" doesn't convince it: the outlet is still bare.</sub></td>
+    <td align="center"><sub>Before and after: same place first, then what changed.</sub></td>
+  </tr>
+</table>
+
+---
+
+## How it works
+
+```mermaid
+flowchart TD
+    A["Work order + photos<br/>(optional before photos)"] --> G{"Guardrails"}
+    G -- "bad input" --> E["Field- or file-specific error,<br/>before any analysis"]
+    G --> P["PLANNING<br/>Muse Spark turns the work order<br/>into checkable requirements"]
+    P --> AN["ANALYZING<br/>one look per after photo,<br/>recorded as observations"]
+    AN --> C["COMPARING<br/>before photos only: same place?<br/>what changed?"]
+    C --> V["VERIFYING<br/>DONE / MISSING / CANT_TELL,<br/>citing observation IDs"]
+    V --> I["INVESTIGATING<br/>bounded tool loop for<br/>unresolved requirements"]
+    I --> GR["GROUNDING<br/>SAM 3.1 boxes on the<br/>objects cited as evidence"]
+    GR --> R["Report · follow-up requests ·<br/>notification · email summary"]
+    R -. "follow-up photo" .-> RV["REVERIFYING<br/>only that requirement"]
+    RV --> R
 ```
-work order + photos (+ optional before photos)
-  │
-  ├─ Guardrails ─────────── text and file checks (deterministic), then a Muse Spark scope check
-  │                         → bad input is rejected with a field- or file-specific error, before any analysis
-  ├─ PLANNING ───────────── Muse Spark turns the work order into checkable requirements
-  ├─ ANALYZING ──────────── Muse Spark looks at every after photo once and records concrete observations
-  ├─ COMPARING ──────────── only with before photos: Muse Spark sees before and after together, checks they
-  │                         show the same place, and records what changed
-  ├─ VERIFYING ──────────── Muse Spark assigns DONE / MISSING / CANT_TELL per requirement,
-  │                         citing observation IDs; a deterministic check rejects uncited verdicts
-  ├─ INVESTIGATING ──────── bounded tool loop for unresolved requirements (see below)
-  ├─ GROUNDING ──────────── SAM 3.1 locates the objects cited as evidence, for overlays
-  └─ NEEDS_USER_ACTION / COMPLETED / FAILED
-        + persisted report, follow-up photo requests, in-app notification
 
-follow-up photo for one open requirement
-  └─ REVERIFYING ────────── analyze only the new photo against that requirement → compare with before
-                            photos, if any → verify → investigate → ground; other requirements are untouched
-```
+Guardrails run deterministic text and file checks first, then a Muse Spark scope check. Each stage is persisted, and the UI shows the stage the backend is actually in. There are no fake progress timers.
 
-Each stage is persisted, and the UI shows the stage the backend is actually in. There are no fake progress timers.
+### Statuses mean specific things
+
+| Status | Meaning |
+|---|---|
+| 🟢 `DONE` | Observations positively show the requirement is met |
+| 🔴 `MISSING` | Observations positively show it is *not* met. Not seeing something is not treated as proof it's missing |
+| 🟡 `CANT_TELL` | Insufficient, obscured or conflicting evidence. Always comes with a specific follow-up photo request |
+| ⚪ `FAILED` (inspection) | A technical problem such as a timeout, rate limit or malformed model output. **Never recorded as a finding**. One click retries it with the same photos |
 
 ### The investigation loop
 
@@ -47,15 +99,21 @@ When a requirement comes back `CANT_TELL`, Muse Spark gets a small set of allowl
 | `count_objects(photo, object_phrase)` | SAM 3.1 finds and counts every instance (e.g. "outlet cover plate") |
 | `finalize(status, reasoning, observation_ids, follow_up_request)` | Records the decision |
 
-Every argument is validated with Pydantic. Unknown tools, unknown photos, or malformed arguments go back to the model as recoverable errors. Each tool result is stored as a real observation, and `finalize` passes through the same deterministic check as the verifier, so a `DONE` still needs a cited observation. The loop is bounded to 3 requirements, 4 turns per requirement, and 8 tool calls per inspection. If the model is unavailable, the first-pass verdict stands and the inspection does not fail. Each step is recorded and shown under **How ProofLine checked this** in the report.
+- **Validated:** every argument goes through Pydantic. Unknown tools, unknown photos, or malformed arguments go back to the model as recoverable errors.
+- **Evidence-backed:** each tool result is stored as a real observation, and `finalize` passes the same deterministic check as the verifier, so a `DONE` still needs a cited observation.
+- **Bounded:** at most 3 requirements, 4 turns per requirement, and 8 tool calls per inspection.
+- **Fails safe:** if the model is unavailable, the first-pass verdict stands and the inspection does not fail.
+- **Visible:** each step is shown under **How ProofLine checked this** in the report.
 
 ### Follow-up photos
 
-Every `CANT_TELL` requirement has an **Add follow-up photo** button on its follow-up card. The new photo joins the same inspection. Only that requirement is re-checked: its existing observations plus the new photo go through verification, then the investigation loop if it is still unresolved. If the evidence now supports a decision, the request is closed. Otherwise it stays open with a new, more specific request. If the model is unavailable during a re-check, the earlier result stands and the card shows the error, so a re-check failure never becomes a finding or fails the inspection. While a re-check is running, further uploads return `409`.
+Every `CANT_TELL` requirement has an **Add follow-up photo** button on its follow-up card. The new photo joins the same inspection, and only that requirement is re-checked: its existing observations plus the new photo go through verification, then the investigation loop if it is still unresolved. If the evidence now supports a decision, the request is closed. Otherwise it stays open with a new, more specific request.
+
+If the model is unavailable during a re-check, the earlier result stands and the card shows the error, so a re-check failure never becomes a finding or fails the inspection. While a re-check is running, further uploads return `409`.
 
 ### Before and after photos
 
-Work like "patch the hole" or "repaint the wall" is hard to verify from an after photo alone: a smooth green wall doesn't prove it's the wall that had the hole. Before photos are optional. When they are added, one Muse Spark call sees them next to the after photos and reports, per requirement, whether the after photo shows the **same place** (matching fixed features such as outlets, trim, windows and doors) and **what changed**. Each comparison is stored as an observation on the after photo, so it can be cited and is shown in the report. The report places the before photo next to the after photo.
+Work like "patch the hole" or "repaint the wall" is hard to verify from an after photo alone: a smooth green wall doesn't prove it's the wall that had the hole. Before photos are optional. When they are added, one Muse Spark call sees them next to the after photos and reports, per requirement, whether the after photo shows the **same place** (matching fixed features such as outlets, trim, windows and doors) and **what changed**. Each comparison is stored as an observation on the after photo, so it can be cited and is shown in the report next to the before photo.
 
 Two deterministic rules keep this conservative:
 
@@ -68,24 +126,15 @@ If the comparison call fails, the inspection fails with a retryable error instea
 
 Each inspection can name an email address. When the report is ready, and again after a follow-up photo is checked, ProofLine writes a plain-text summary: problems first, each requirement with its verdict and reason, the exact photo still needed, and a link to the report. It is sent over SMTP when `SMTP_HOST` is set in `backend/.env`; otherwise it is kept in `data/outbox/` and the report shows **Preview email**. Delivery problems are recorded on the message and never change the inspection.
 
-### Statuses mean specific things
-
-| Status | Meaning |
-|---|---|
-| `DONE` | Observations positively show the requirement is met |
-| `MISSING` | Observations positively show it is *not* met. Not seeing something is not treated as proof it's missing |
-| `CANT_TELL` | Insufficient, obscured or conflicting evidence. Always comes with a specific follow-up photo request |
-| `FAILED` (inspection) | A technical problem such as a timeout, rate limit or malformed model output. **Never recorded as a finding**. One click retries it with the same photos |
-
 ---
 
 ## Evaluation
 
-31 labelled cases (39 requirements, 5 of them with before photos) ran through the full pipeline against the live API. Results are in [data/eval/results.md](data/eval/results.md).
+31 labelled cases (39 requirements, 5 of them with before photos) ran through the full pipeline against the live API. Full results: [data/eval/results.md](data/eval/results.md).
 
 | Metric | Result |
 |---|---|
-| **False completions** (a requirement marked "Supported" when the photo doesn't support it) | **0 of 22** |
+| **False completions** (marked "Supported" when the photo doesn't support it) | **0 of 22** |
 | Requirements flagged "Not met" without support | 0 of 39 |
 | Acceptable verdict | 39 of 39 |
 | Exact match with the primary label | 31 of 39 (the other 8 said "Needs evidence" where "Supported" was also defensible) |
@@ -93,7 +142,12 @@ Each inspection can name an email address. When the report is ready, and again a
 
 The set includes deliberately tricky cases: a sticky note reading "ALL DONE" beside an uncovered outlet, a request for four outlet covers when only two outlets are in frame, a hidden leak under a sink, an irrelevant photo, a dark and blurry photo, a wall painted the wrong colour, an "after" photo of a freshly painted wall in a different room than the before photo, and a before photo of a damaged wall paired with an after photo that doesn't show the wall.
 
-**Read these numbers with care:** the photos are AI-generated (`muse-image-1.0`) to show specific situations, the before photos were made by editing the after photos so the pairs really match, labels were assigned by one person, and 31 cases is a sanity check, not a benchmark. Across four full runs, there were 0 false completions every time. The first two runs each lost one case to a technical failure: invalid JSON in one, a provider HTTP 503 in the other. Both were reported as FAILED, never as a finding. The client now sends one corrective retry for invalid JSON and retries transient provider errors (429/5xx) once, and the published run had no failures. Reproduce with:
+> [!IMPORTANT]
+> **Read these numbers with care.** The photos are AI-generated (`muse-image-1.0`) to show specific situations, the before photos were made by editing the after photos so the pairs really match, labels were assigned by one person, and 31 cases is a sanity check, not a benchmark.
+>
+> Across four full runs, there were 0 false completions every time. The first two runs each lost one case to a technical failure: invalid JSON in one, a provider HTTP 503 in the other. Both were reported as FAILED, never as a finding. The client now sends one corrective retry for invalid JSON and retries transient provider errors (429/5xx) once, and the published run had no failures.
+
+Reproduce with:
 
 ```bash
 cd backend
@@ -134,7 +188,8 @@ npm install
 npm run dev                          # http://localhost:5173 (proxies /api to :8000)
 ```
 
-On Windows, `npm install && npm run install:all` and then `npm run dev` from the repo root start both servers.
+> [!TIP]
+> On Windows, `npm install && npm run install:all` and then `npm run dev` from the repo root start both servers.
 
 **Check API access before a demo:**
 
@@ -145,7 +200,20 @@ cd backend
 
 This runs five live checks: model list, text, base64 image, tool calling, and SAM 3.1. It prints PASS/FAIL for each and never prints the key.
 
-**Try it:** open http://localhost:5173 and click **Try it with a sample job**. This fills in the work order and photo below, and once the report is ready, the smoke-detector requirement offers **Use the sample follow-up photo**. **Try a before/after job** instead loads a damaged wall as the before photo and the repaired, repainted wall as the after photo, so the report shows the same-place comparison side by side. **All sample jobs** lists all 31 labelled evaluation cases with their expected result; click one to load it. To do it by hand, enter
+**Try it:** open http://localhost:5173 and use one of the sample buttons:
+
+| Button | What it loads |
+|---|---|
+| **Try it with a sample job** | Two outlets (one bare) and a smoke detector. Once the report is ready, the smoke-detector requirement offers **Use the sample follow-up photo** |
+| **Try a before/after job** | A damaged wall as the before photo and the repaired, repainted wall as the after photo, so the report shows the same-place comparison side by side |
+| **All sample jobs** | All 31 labelled evaluation cases with their expected result; click one to load it |
+
+<details>
+<summary><b>Walk through the sample job by hand</b></summary>
+
+<br/>
+
+Enter
 
 ```
 - Install cover plates on both wall outlets
@@ -156,6 +224,8 @@ and upload `data/samples/outlets_one_uncovered.png`. The expected result: outlet
 
 `data/samples/hallway_ceiling_painted.png` shows the cautious side. Given as a follow-up for "Repaint the hallway ceiling", ProofLine took a closer look and still asked for more coverage (one upward angle, with an overexposed far end) rather than declaring the ceiling repainted from a single after-photo.
 
+</details>
+
 ---
 
 ## Deploy (Render)
@@ -164,7 +234,7 @@ The `Dockerfile` builds the frontend and serves it from FastAPI, so the whole ap
 
 1. On [render.com](https://render.com), choose **New → Blueprint** and pick this repository. `render.yaml` defines a free Docker web service.
 2. Enter `MODEL_API_KEY` when Render asks for it. It stays in Render's environment and is never sent to the browser.
-3. Set a spend limit on the Meta Model API billing page, since the link is public.
+3. Set a spend alert on the Meta Model API billing page, since the link is public.
 
 Each run, retry and follow-up check counts against an hourly cap: `RUNS_PER_HOUR` (30) across all visitors and `RUNS_PER_DEVICE_PER_HOUR` (8) per device. Over the cap the API returns `429 USAGE_LIMIT`. Both default to off for local runs.
 
@@ -181,7 +251,12 @@ cd backend
 .venv\Scripts\python -m pytest -q
 ```
 
-77 tests. **All of them mock the Meta API**, so none need network access or a key. They cover:
+**77 tests. All of them mock the Meta API**, so none need network access or a key. Live behavior was checked separately with `scripts/smoke_meta.py` and end-to-end runs against the real API.
+
+<details>
+<summary><b>What the tests cover</b></summary>
+
+<br/>
 
 - **False completion:** `DONE` with no cited evidence, or citing invented observation IDs, is downgraded to `CANT_TELL`, in both the verifier and the investigation loop.
 - **Failure separation:** provider timeouts and rate limits produce `FAILED` with an error code and leave tasks unassessed, never `CANT_TELL`. A model outage inside the optional investigation loop does not fail the inspection.
@@ -196,29 +271,36 @@ cd backend
 - **SAM parsing:** real response format, out-of-bounds boxes, whole-frame boxes.
 - **Data safety:** another device gets 404s for inspections, reports, photos and notifications it did not create; images can only be read through the inspection that owns them; old databases get missing columns added on startup.
 
-Live behavior was checked separately with `scripts/smoke_meta.py` and end-to-end runs against the real API.
+</details>
 
 ---
 
 ## API
 
+<details>
+<summary><b>Endpoints</b></summary>
+
+<br/>
+
 | Method | Route | Purpose |
 |---|---|---|
 | `POST` | `/api/inspections` | Validate and create (`files`, optional `before_files` and `notify_email`); runs in the background. Returns `202` with `inspection_id` |
-| `GET` | `/api/inspections/{id}/emails/{email_id}` | The email summary's subject and body |
 | `GET` | `/api/inspections` | History with status, outcome and counts |
 | `GET` | `/api/inspections/{id}` | Live status and stage (polled by the UI) |
 | `GET` | `/api/inspections/{id}/report` | Tasks, observations, evidence links, SAM regions, follow-ups, investigation steps |
+| `GET` | `/api/inspections/{id}/emails/{email_id}` | The email summary's subject and body |
+| `GET` | `/api/inspections/{id}/images/{image_id}` | Image bytes, only for an image belonging to that inspection |
 | `POST` | `/api/inspections/{id}/tasks/{task_id}/follow-up-photos` | Attach follow-up photos (1–5) to an open request; re-checks that requirement in the background. `202`, or `409` if nothing is waiting |
 | `POST` | `/api/inspections/{id}/retry` | Re-run a `FAILED` inspection with the same work order and photos. `409` otherwise |
 | `GET` | `/api/samples`, `/api/samples/{name}` | Bundled demo work orders and photos (fixed allowlist) |
 | `GET` | `/api/samples/cases`, `/api/samples/cases/{name}` | The labelled evaluation cases as sample jobs; photos limited to those the cases use |
-| `GET` | `/api/inspections/{id}/images/{image_id}` | Image bytes, only for an image belonging to that inspection |
 | `GET` | `/api/notifications` | Notifications plus unread count |
 | `POST` | `/api/notifications/{id}/read`, `/api/notifications/read-all` | Mark read |
 | `POST` | `/api/inspect` | Legacy synchronous endpoint, kept for compatibility |
 
 Errors share one shape: `{"error": {code, stage, message, suggestion, retryable, field?, file_id?}, "errors": [...]}`. When the hourly usage cap is on, creating, retrying or adding follow-up photos can also return `429 USAGE_LIMIT`.
+
+</details>
 
 ---
 
@@ -226,20 +308,24 @@ Errors share one shape: `{"error": {code, stage, message, suggestion, retryable,
 
 ```
 backend/app/
-  api/                 inspections, notifications, legacy inspect
+  api/                 inspections, notifications, samples, legacy inspect
   guardrails/          deterministic validators, semantic preflight, error contract
   services/
     meta_client.py     Meta Model API client (typed errors, base64 images, SAM streaming)
     segmentation.py    SAM 3.1 output → internal regions
+    email_summary.py   summary emails (SMTP or local outbox)
     agent/             orchestrator, planner, visual_analyst, comparer, verifier, investigator, tools
   models/              SQLAlchemy models (SQLite at data/db/proofline.db)
-backend/scripts/smoke_meta.py   live API checks
-backend/scripts/run_eval.py     labelled evaluation against the live API
-data/eval/                      evaluation cases, photos, prompts, results
-backend/tests/                  mocked test suite
+  device.py            anonymous per-device cookie
+  usage.py             hourly run cap for public deployments
+backend/scripts/       smoke_meta.py (live API checks), run_eval.py (labelled evaluation)
+backend/tests/         mocked test suite
+data/eval/             evaluation cases, photos, prompts, results
+data/samples/          sample jobs used by the demo buttons
 frontend/src/
   pages/               NewInspection, InspectionView (progress + report), InspectionsList
   components/report/   EvidenceViewer (photo + SAM overlays), TaskPanel, StageProgress
+Dockerfile, render.yaml  one-container deploy
 ```
 
 ---
@@ -250,6 +336,6 @@ frontend/src/
 - **Background work runs in-process.** An inspection or follow-up re-check that is running when the server restarts stays at its last stage.
 - **Same-place checks rely on visible fixed features.** A blank wall with no outlets, trim or windows in frame gives the comparison little to match, so it says "unclear" rather than "same place".
 - **SAM masks are not decoded**, only boxes. A box means "this object was detected here", not "this work is complete".
-- **Evaluation photos are generated, not real site photos.** See the caveats under Evaluation.
+- **Evaluation photos are generated, not real site photos.** See the caveats under [Evaluation](#evaluation).
 - Uploaded photos are stored locally under `backend/app/static/uploads/` with no automatic retention cleanup.
 - With uvicorn's `--reload` on Windows, the server sometimes fails to finish reloading. Restart it manually if new code doesn't seem to take effect.
