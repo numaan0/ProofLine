@@ -18,6 +18,8 @@ async def guardrail_exception_handler(request: Request, exc: Exception):
             status_code = 415
         elif code in ("EMPTY_WORK_ORDER", "NO_FILES_UPLOADED"):
             status_code = 400
+        elif code == "USAGE_LIMIT":
+            status_code = 429
         elif code in ("VALIDATION_SERVICE_FAILURE", "MODEL_TIMEOUT", "MODEL_RATE_LIMIT", "MODEL_AUTH_FAILURE", "MALFORMED_MODEL_OUTPUT"):
             status_code = 503
         return JSONResponse(status_code=status_code, content={"error": detail})

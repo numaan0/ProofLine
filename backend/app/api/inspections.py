@@ -18,6 +18,7 @@ from ..guardrails.validators import PhotoValidator, RequestValidator, WorkOrderV
 from ..services.agent.orchestrator import orchestrator
 from ..services.email_summary import valid_email
 from ..services.persistence import async_session, init_db
+from ..usage import count_run
 from app.models.inspection_models import (
     EmailSummary, EvidenceLink, FollowUpRequest, Inspection, InspectionImage, Notification, Observation, Task,
 )
@@ -108,6 +109,7 @@ async def create_inspection(background_tasks: BackgroundTasks, work_order_text: 
     RequestValidator.validate_request_meta(work_order_text, len(files) + len(before_files))
     WorkOrderValidator.validate_deterministic(work_order_text)
     accepted = await read_and_validate_files(files, before_files)
+    count_run(device)  # before the first model call (the scope check)
     await preflight_work_order(work_order_text)
 
     first_line = next((l.strip(" -*•\t") for l in work_order_text.splitlines() if l.strip()), "Inspection")
@@ -132,6 +134,7 @@ async def retry_inspection(inspection_id: str, background_tasks: BackgroundTasks
         if insp.status != "FAILED":
             raise HTTPException(409, detail={"code": "NOT_RETRYABLE", "retryable": False,
                                              "message": "Only an inspection that failed for a technical reason can be retried."})
+        count_run(device)
         # A failed run can leave partial rows (tasks from planning, observations from analysis); start clean.
         task_ids = [t.id for t in (await session.execute(select(Task).where(Task.inspection_id == inspection_id))).scalars()]
         if task_ids:
@@ -172,6 +175,7 @@ async def add_follow_up_photos(inspection_id: str, task_id: str, background_task
                 "retryable": True})
 
     accepted = await read_and_validate_files(files)
+    count_run(device)
     async with async_session() as session:
         rows = await store_images(session, inspection_id, accepted)
         follow_up = await session.get(FollowUpRequest, follow_up.id)

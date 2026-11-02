@@ -33,10 +33,16 @@ app.include_router(inspections.router, prefix="/api", tags=["inspections"])
 app.include_router(notifications.router, prefix="/api", tags=["notifications"])
 app.include_router(samples.router, prefix="/api", tags=["samples"])
 
-@app.get("/")
-def root():
-    return {"message": "ProofLine API", "docs": "/docs"}
-
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "proofline-api"}
+
+# In the Docker image the built frontend sits next to the backend and is served from the same origin,
+# so the device cookie and relative /api paths work unchanged. Mounted last: API routes match first.
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
+if os.path.isdir(frontend_dist):
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+else:
+    @app.get("/")
+    def root():
+        return {"message": "ProofLine API", "docs": "/docs"}

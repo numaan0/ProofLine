@@ -156,6 +156,22 @@ and upload `data/samples/outlets_one_uncovered.png`. The expected result: outlet
 
 ---
 
+## Deploy (Render)
+
+The `Dockerfile` builds the frontend and serves it from FastAPI, so the whole app is one container on one URL, and the device cookie and relative `/api` paths work as they do locally.
+
+1. On [render.com](https://render.com), choose **New → Blueprint** and pick this repository. `render.yaml` defines a free Docker web service.
+2. Enter `MODEL_API_KEY` when Render asks for it. It stays in Render's environment and is never sent to the browser.
+3. Set a spend limit on the Meta Model API billing page, since the link is public.
+
+Each run, retry and follow-up check counts against an hourly cap: `RUNS_PER_HOUR` (30) across all visitors and `RUNS_PER_DEVICE_PER_HOUR` (8) per device. Over the cap the API returns `429 USAGE_LIMIT`. Both default to off for local runs.
+
+On Render's free plan the service sleeps after 15 idle minutes, so the first visit takes up to a minute, and saved inspections are cleared when it restarts. Report links in email summaries use Render's public URL.
+
+To run the same container locally: `docker build -t proofline .` then `docker run -p 8000:8000 -e MODEL_API_KEY=... proofline`, and open http://localhost:8000.
+
+---
+
 ## Tests
 
 ```bash
@@ -163,7 +179,7 @@ cd backend
 .venv\Scripts\python -m pytest -q
 ```
 
-76 tests. **All of them mock the Meta API**, so none need network access or a key. They cover:
+77 tests. **All of them mock the Meta API**, so none need network access or a key. They cover:
 
 - **False completion:** `DONE` with no cited evidence, or citing invented observation IDs, is downgraded to `CANT_TELL`, in both the verifier and the investigation loop.
 - **Failure separation:** provider timeouts and rate limits produce `FAILED` with an error code and leave tasks unassessed, never `CANT_TELL`. A model outage inside the optional investigation loop does not fail the inspection.
@@ -173,6 +189,7 @@ cd backend
 - **Follow-up photos:** only the open requirement is re-checked; an uncited `DONE` is still downgraded; a model outage keeps the earlier result; uploads are rejected when nothing is waiting or a re-check is running.
 - **Provider resilience:** a reasoning cut-off, invalid JSON, and a transient 429/5xx each get exactly one retry; auth errors are not retried.
 - **Retry:** only `FAILED` inspections can be retried, and a retry starts from a clean slate.
+- **Usage cap:** over the hourly limit, per device or overall, requests get `429` and never start a run.
 - **Tool loop:** argument validation, unknown tools and photos, budget enforcement, SAM failure inside a tool.
 - **SAM parsing:** real response format, out-of-bounds boxes, whole-frame boxes.
 - **Data safety:** another device gets 404s for inspections, reports, photos and notifications it did not create; images can only be read through the inspection that owns them; old databases get missing columns added on startup.
@@ -199,7 +216,7 @@ Live behavior was checked separately with `scripts/smoke_meta.py` and end-to-end
 | `POST` | `/api/notifications/{id}/read`, `/api/notifications/read-all` | Mark read |
 | `POST` | `/api/inspect` | Legacy synchronous endpoint, kept for compatibility |
 
-Errors share one shape: `{"error": {code, stage, message, suggestion, retryable, field?, file_id?}, "errors": [...]}`.
+Errors share one shape: `{"error": {code, stage, message, suggestion, retryable, field?, file_id?}, "errors": [...]}`. When the hourly usage cap is on, creating, retrying or adding follow-up photos can also return `429 USAGE_LIMIT`.
 
 ---
 

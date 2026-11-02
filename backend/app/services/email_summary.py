@@ -87,7 +87,7 @@ async def send_summary(inspection_id: str, update: bool = False) -> Optional[str
                 return None
             tasks = (await session.execute(select(Task).where(Task.inspection_id == inspection_id).order_by(Task.created_at))).scalars().all()
             follow_ups = (await session.execute(select(FollowUpRequest).where(FollowUpRequest.inspection_id == inspection_id))).scalars().all()
-            subject, body = compose(insp, tasks, follow_ups, cfg["APP_URL"] or "http://localhost:5173", update)
+            subject, body = compose(insp, tasks, follow_ups, cfg["APP_URL"] or os.environ.get("RENDER_EXTERNAL_URL") or "http://localhost:5173", update)
             row = EmailSummary(inspection_id=inspection_id, to_address=insp.notify_email, subject=subject, body_text=body)
             session.add(row)
             await session.flush()

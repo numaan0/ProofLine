@@ -179,3 +179,19 @@ def test_inspections_are_private_to_the_device(client):
 def test_bad_device_cookie_is_replaced(client):
     with TestClient(app, cookies={DEVICE_COOKIE: "../not-an-id"}) as c:
         assert c.get("/api/inspections").cookies.get(DEVICE_COOKIE) not in (None, "../not-an-id")
+
+
+def test_hourly_usage_limit_is_429_per_device_and_overall(client, monkeypatch):
+    import app.usage as usage
+    from collections import deque
+    monkeypatch.setattr(usage, "_runs", deque())
+    monkeypatch.setenv("RUNS_PER_DEVICE_PER_HOUR", "2")
+    monkeypatch.setenv("RUNS_PER_HOUR", "3")
+    post = lambda c: c.post("/api/inspections", data={"work_order_text": "Install two outlet covers"},
+                            files=[("files", ("a.png", png_bytes(), "image/png"))])
+    assert [post(client).status_code for _ in range(3)] == [202, 202, 429]
+    limited = post(client).json()["error"]
+    assert limited["code"] == "USAGE_LIMIT" and limited["retryable"] is True
+    with TestClient(app) as other:  # its own device allowance, until the overall limit is used up
+        assert [post(other).status_code for _ in range(2)] == [202, 429]
+    assert len(client.runs) == 3, "limited requests never start a run"

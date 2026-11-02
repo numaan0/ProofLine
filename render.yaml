@@ -1,0 +1,14 @@
+# Render blueprint: New > Blueprint > this repo. Render asks for MODEL_API_KEY when it creates the service.
+services:
+  - type: web
+    name: proofline
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MODEL_API_KEY
+        sync: false
+      - key: RUNS_PER_HOUR
+        value: "30"
+      - key: RUNS_PER_DEVICE_PER_HOUR
+        value: "8"
