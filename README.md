@@ -2,6 +2,8 @@
 
 **Visual work verification that knows what it can't see.**
 
+**Try it live: https://proofline-fm47.onrender.com** (free hosting: the first load after a quiet spell can take up to a minute). Click "Try it with a sample job", or pick any of the 31 labelled cases under "All sample jobs".
+
 ProofLine checks a maintenance work order against completion photos. For each requirement it says whether the photos support completion, show that the work is *not* done, or don't show enough to tell. When the photos fall short, it says exactly which photo to take next. Every finding links back to the observations and photo regions it rests on.
 
 It is built for residential maintenance and small renovation jobs, the kind where a coordinator receives "done!" plus three phone photos and has to decide whether to close the ticket.
